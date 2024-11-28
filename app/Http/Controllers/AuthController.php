@@ -47,43 +47,66 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|exists:users',
-            'password' => 'required',
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email|exists:users',
+        'password' => 'required',
+    ]);
 
-        $user = User::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(
-                [
-                    'message' => 'Credenciais inválidas. Verifique seu e-mail e senha.'
-                ], 401
-            );
-        }
-
-        $token = $user->createToken($user->name);
-
-        $cookie = cookie(
-            'authToken',
-            $token->plainTextToken,
-            1440,
-            '/',
-            null,
-            true,
-            true,
-            false,
-            'strict'
-        );
-
+    if (!$user || !Hash::check($request->password, $user->password)) {
         return response()->json(
             [
-                'message' => 'Login bem-sucedido',
-                'user' => $user,
-            ]
-        )->cookie($cookie);
+                'message' => 'Credenciais inválidas. Verifique seu e-mail e senha.'
+            ], 401
+        );
     }
+
+    $token = $user->createToken($user->name);
+
+    // Cookie com o token de autenticação
+    $cookie = cookie(
+        'authToken',
+        $token->plainTextToken,
+        1440,  // 1 dia (em minutos)
+        '/',
+        null,
+        true,
+        true,
+        false,
+        'strict'
+    );
+
+    // Cookie com as informações do usuário (name, id, email)
+    $userInfo = json_encode([
+        'name' => $user->name,
+        'id' => $user->id,
+        'email' => $user->email
+    ]);
+
+    $userCookie = cookie(
+        'userInfo',
+        $userInfo,
+        1440,  // 1 dia (em minutos)
+        '/',
+        null,
+        true,
+        true,
+        false,
+        'strict'
+    );
+
+    return response()->json(
+        [
+            'message' => 'Login bem-sucedido',
+            'user' => $user,
+        ]
+    )
+    ->cookie($cookie)
+    ->cookie($userCookie);
+}
+
 
     public function logout(Request $request)
     {
