@@ -19,101 +19,51 @@ class AuthController extends Controller
         $user = User::create($fields);
 
         if (!$user) {
-            return [
-                'message' => 'Erro ao criar usuário.'
-            ];
+            return response()->json([
+                'message' => 'Erro ao criar usuário.',
+            ], 500);
         }
 
-        $token = $user->createToken($request->name);
+        $token = $user->createToken('API Token')->plainTextToken;
 
-        $cookie = cookie(
-            'authToken',
-            $token->plainTextToken,
-            1440,
-            '/',
-            null,
-            true,
-            true,
-            false,
-            'strict'
-        );
-
-        return response()->json(
-            [
-                'message' => 'Usuário criado com sucesso.',
-                'user' => $user,
-            ]
-        )->cookie($cookie);
+        return response()->json([
+            'message' => 'Usuário criado com sucesso.',
+            'user' => $user,
+            'token' => $token,
+        ], 201);
     }
 
     public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email|exists:users',
-        'password' => 'required',
-    ]);
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users',
+            'password' => 'required',
+        ]);
 
-    $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-    if (!$user || !Hash::check($request->password, $user->password)) {
-        return response()->json(
-            [
-                'message' => 'Credenciais inválidas. Verifique seu e-mail e senha.'
-            ], 401
-        );
-    }
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Credenciais inválidas. Verifique seu e-mail e senha.',
+            ], 401);
+        }
 
-    $token = $user->createToken($user->name);
+        $token = $user->createToken('API Token')->plainTextToken;
 
-    // Cookie com o token de autenticação
-    $cookie = cookie(
-        'authToken',
-        $token->plainTextToken,
-        1440,  // 1 dia (em minutos)
-        '/',
-        null,
-        true,
-        true,
-        false,
-        'strict'
-    );
-
-    // Cookie com as informações do usuário (name, id, email)
-    $userInfo = json_encode([
-        'name' => $user->name,
-        'id' => $user->id,
-        'email' => $user->email
-    ]);
-
-    $userCookie = cookie(
-        'userInfo',
-        $userInfo,
-        1440,  // 1 dia (em minutos)
-        '/',
-        null,
-        true,
-        true,
-        false,
-        'strict'
-    );
-
-    return response()->json(
-        [
-            'message' => 'Login bem-sucedido',
+        return response()->json([
+            'message' => 'Login bem-sucedido.',
             'user' => $user,
-        ]
-    )
-    ->cookie($cookie)
-    ->cookie($userCookie);
-}
-
+            'token' => $token,
+        ]);
+    }
 
     public function logout(Request $request)
     {
+        // Revoga todos os tokens do usuário autenticado
         $request->user()->tokens()->delete();
 
-        return [
-            'message' => 'Deslogado.'
-        ];
+        return response()->json([
+            'message' => 'Deslogado com sucesso.',
+        ]);
     }
 }
