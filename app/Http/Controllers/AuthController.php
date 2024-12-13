@@ -48,13 +48,33 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $token = $user->createToken('API Token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
 
+        $cookie = cookie(
+          'auth_token',
+            $token,
+          10,
+            '/',
+            null,
+            true,
+            true,
+            false,
+            'Strict'
+        );
+            dd($token, $cookie);
         return response()->json([
-            'message' => 'Login bem-sucedido.',
-            'user' => $user,
-            'token' => $token,
-        ]);
+            'message' => 'Login realizado com sucesso!',
+            'token' => $cookie->getValue()
+        ])->cookie($cookie);
+    }
+
+    public function verifyToken(Request $request)
+    {
+        $token = $request->cookie('auth_token');
+        if (!$token || !auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        return response()->json(['message' => 'Authenticated'], 200);
     }
 
     public function logout(Request $request)
