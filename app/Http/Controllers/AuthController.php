@@ -61,7 +61,7 @@ class AuthController extends Controller
             false,
             'Strict'
         );
-            dd($token, $cookie);
+
         return response()->json([
             'message' => 'Login realizado com sucesso!',
             'token' => $cookie->getValue()
