@@ -35,8 +35,7 @@ class AuthController extends Controller
             true,
             true,
             false,
-            'none',
-            'Partitioned'
+            'none'
         );
 
         return response()->json([
@@ -72,8 +71,7 @@ class AuthController extends Controller
             true,
             true,
             false,
-            'none',
-            'Partitioned'
+            'none'
         );
 
         return response()->json([
