@@ -38,22 +38,6 @@ class TaskController extends Controller
 
         return response()->json($result);
 
-
-
-//        $tasks = Task::all();
-//
-//        // Formatar o created_at de cada categoria no padrão brasileiro
-//        foreach($tasks as $task){
-//            // Usar o Carbon para formatar a data no padrão brasileiro (d/m/Y H:i)
-//            $task->dataLimite = date('d/m/Y H:i', strtotime($task->due_date));
-//        }
-//
-//        return response()->json(
-//            [
-//                'message' => 'Listagem das tasks realizadas com sucesso.',
-//                'tasks' => $tasks
-//            ]
-//        );
     }
 
     /**
@@ -61,8 +45,31 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        // Validação dos dados recebidos
+        $validatedData = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'due_date' => 'required|date|after_or_equal:today',
+        ]);
+
+        // Criação da tarefa
+        $task = Task::create([
+            'user_id' => auth()->user()->id,
+            'category_id' => $validatedData['category_id'],
+            'title' => $validatedData['title'],
+            'description' => $validatedData['description'],
+            'due_date' => $validatedData['due_date'],
+        ]);
+
+        // Retornar resposta ou redirecionamento
+        return response()->json([
+            'message' => 'Task created successfully!',
+            'task' => $task,
+        ], 201);
     }
+
 
     /**
      * Display the specified resource.

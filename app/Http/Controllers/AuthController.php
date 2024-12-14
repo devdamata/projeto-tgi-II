@@ -68,13 +68,12 @@ class AuthController extends Controller
             $token,
           10,
             '/',
-            'damatatechnology.com.br',
+            null,
             true,
             true,
             false,
-            'None',
-            true
-        )->withPartitioned(true);
+            'None'
+        );
 
         return response()->json([
             'message' => 'Login realizado com sucesso!',
