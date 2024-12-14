@@ -24,13 +24,25 @@ class AuthController extends Controller
             ], 500);
         }
 
-        $token = $user->createToken('API Token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        $cookie = cookie(
+            'auth_token',
+            $token,
+            10,
+            '/',
+            null,
+            true,
+            true,
+            false,
+            'none'
+        );
 
         return response()->json([
             'message' => 'Usuário criado com sucesso.',
             'user' => $user,
-            'token' => $token,
-        ], 201);
+            'token' => $cookie->getValue()
+        ])->cookie($cookie);
     }
 
     public function login(Request $request)
@@ -59,7 +71,7 @@ class AuthController extends Controller
             true,
             true,
             false,
-            'Strict'
+            'none'
         );
 
         return response()->json([
