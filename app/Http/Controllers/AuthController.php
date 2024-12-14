@@ -35,14 +35,15 @@ class AuthController extends Controller
             true,
             true,
             false,
-            'none'
+            'none',
+            'Partitioned'
         );
 
         return response()->json([
             'message' => 'Usuário criado com sucesso.',
             'user' => $user,
             'token' => $cookie->getValue()
-        ])->cookie($cookie);
+        ])->cookie($cookie = $cookie.';Partitioned');
     }
 
     public function login(Request $request)
@@ -71,13 +72,16 @@ class AuthController extends Controller
             true,
             true,
             false,
-            'none'
+            'none',
+            true
         );
+        $cookieHeaders = $cookie.'; Partitioned';
+            dd($cookieHeaders);
 
         return response()->json([
             'message' => 'Login realizado com sucesso!',
             'token' => $cookie->getValue()
-        ])->cookie($cookie);
+        ])->cookie($cookieHeaders);
     }
 
     public function verifyToken(Request $request)
