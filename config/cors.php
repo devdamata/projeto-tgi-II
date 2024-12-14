@@ -3,6 +3,7 @@
 
 return [
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'with_credentials' => true,
     'allowed_methods' => ['*'],
     'allowed_origins' => ['https://tgi-projeto-front-end.vercel.app'], // Substitua pelo domínio do front-end
     'allowed_origins_patterns' => [],

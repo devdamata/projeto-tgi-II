@@ -68,20 +68,18 @@ class AuthController extends Controller
             $token,
           10,
             '/',
-            null,
+            'damatatechnology.com.br',
             true,
             true,
             false,
-            'none',
+            'None',
             true
-        );
-        $cookieHeaders = $cookie.'; Partitioned';
-            dd($cookieHeaders);
+        )->withPartitioned(true);
 
         return response()->json([
             'message' => 'Login realizado com sucesso!',
             'token' => $cookie->getValue()
-        ])->cookie($cookieHeaders);
+        ])->cookie($cookie);
     }
 
     public function verifyToken(Request $request)
