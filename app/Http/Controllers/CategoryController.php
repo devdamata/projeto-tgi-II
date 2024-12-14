@@ -53,7 +53,15 @@ class CategoryController extends Controller
         // Buscar todas as categorias e contar as tarefas associadas a cada uma
         $categories = Category::withCount('task')->get();
 
-        // Retornar os dados das categorias com o número de tarefas
+        $categories->each(function ($category) {
+            unset($category->created_at);
+            unset($category->updated_at);
+            unset($category->id);
+            $category->value = $category->task_count;
+            unset($category->task_count);
+        });
+
+
         return response()->json($categories);
     }
 }
