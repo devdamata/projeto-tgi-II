@@ -15,10 +15,12 @@ class TaskController extends Controller
     public function index()
     {
         $categories = Category::with(['task' => function ($query) {
-            $query->select('id', 'title', 'description', 'due_date', 'category_id')
+            $query->select('id', 'title', 'description', 'due_date', 'category_id', 'priority')
                 ->where('user_id', Auth::user()->id)
-                ->orderBy('category_id', 'ASC');
-        }])->get();
+                ->orderBy('priority', 'ASC'); // Ordena as tarefas por prioridade dentro de cada categoria
+        }])
+            ->orderBy('id', 'ASC') // Ordena as categorias por ordem de criação (ou outra lógica desejada)
+            ->get();
 
         $result = [
             'category' => $categories->map(function ($category) {
@@ -30,15 +32,16 @@ class TaskController extends Controller
                             'title' => $task->title,
                             'description' => $task->description,
                             'due_date' => $task->due_date,
+                            'priority' => $task->priority, // Inclui a prioridade no resultado, se necessário
                         ];
-                    })
+                    }),
                 ];
-            })
+            }),
         ];
 
         return response()->json($result);
-
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -52,6 +55,7 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'due_date' => 'required|date|after_or_equal:today',
+            'priority' => 'required'
         ]);
 
         // Criação da tarefa
@@ -61,6 +65,7 @@ class TaskController extends Controller
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'due_date' => $validatedData['due_date'],
+            'priority' => $validatedData['priority'],
         ]);
 
         // Retornar resposta ou redirecionamento
