@@ -25,6 +25,8 @@ Route::middleware(['auth:sanctum'])->group(function (){
     Route::get('/category/list', [CategoryController::class, 'index']);
     Route::post('/category', [CategoryController::class, 'store']);
 
+    Route::post('/count/tasks/for/category', [CategoryController::class, 'countTasksForCategory']);
+
     //Tarefas
     Route::get('/task/list', [TaskController::class, 'index']);
 });
