@@ -3,7 +3,7 @@
 
 return [
     'supports_credentials' => true,
-    'allowed_origins' => ['http://localhost:3000'], // URL do seu front-end
+    'allowed_origins' => ['*'], // URL do seu front-end
     'allowed_methods' => ['*'],
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
