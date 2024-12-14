@@ -51,7 +51,7 @@ class CategoryController extends Controller
     public function countTasksForCategory()
     {
         // Buscar todas as categorias e contar as tarefas associadas a cada uma
-        $categories = Category::withCount('tasks')->get();
+        $categories = Category::withCount('task')->get();
 
         // Retornar os dados das categorias com o número de tarefas
         return response()->json($categories);
