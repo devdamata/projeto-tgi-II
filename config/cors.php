@@ -2,10 +2,12 @@
 // config/cors.php
 
 return [
-    'supports_credentials' => true,
-    'allowed_origins' => ['https://tgi-projeto-front-end-git-main-devdamatas-projects-6bfc92be.vercel.app', 'https://tgi-projeto-front-end.vercel.app', 'http://localhost:3000'], // URL do seu front-end
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
     'allowed_methods' => ['*'],
+    'allowed_origins' => ['https://tgi-projeto-front-end.vercel.app'], // Substitua pelo domínio do front-end
+    'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
     'max_age' => 0,
+    'supports_credentials' => true, // Habilitar credenciais (cookies, etc.)
 ];
