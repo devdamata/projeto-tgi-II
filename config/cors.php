@@ -10,5 +10,5 @@ return [
     'exposed_headers' => [],
     'max_age' => 0,
     'supports_credentials' => true, // Habilitar credenciais (cookies, etc.)
-    'cookie_atributes' => '; Partitioned'
+    'cookie_attributes' => '; Partitioned'
 ];
